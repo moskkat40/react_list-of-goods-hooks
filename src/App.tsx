@@ -18,17 +18,20 @@ export const goodsFromServer = [
 ];
 
 export const App: React.FC = () => {
-  const [sortField, setsortField] = useState('');
+  const [sortField, setSortField] = useState('');
   const [isReversed, setReverse] = useState(false);
+  const [isReset, setReset] = useState(goodsFromServer);
 
-  const SORT_ALPHABETICALLY = 'Sort alphabetically';
-  const SORT_LENGTH = 'Sort by length';
+  enum SortType {
+    ALPHABETICALLY = 'Sort alphabetically',
+    LENGTH = 'Sort by length',
+  }
 
-  let visibleGoods = [...goodsFromServer].sort((good1, good2) => {
+  const visibleGoods = [...goodsFromServer].sort((good1, good2) => {
     switch (sortField) {
-      case SORT_ALPHABETICALLY:
+      case SortType.ALPHABETICALLY:
         return good1.localeCompare(good2);
-      case SORT_LENGTH:
+      case SortType.LENGTH:
         return good1.length - good2.length;
       default:
         return 0;
@@ -39,23 +42,23 @@ export const App: React.FC = () => {
     visibleGoods.reverse();
   }
 
-  const reset = () => {
-    visibleGoods = goodsFromServer;
-    setsortField('');
+  const handleReset = () => {
+    setReset(isReset);
+    setSortField('');
     setReverse(false);
   };
 
   return (
     <div className="section content">
       <div className="buttons">
-        {[SORT_ALPHABETICALLY, SORT_LENGTH].map(field => (
+        {[SortType.ALPHABETICALLY, SortType.LENGTH].map(field => (
           <button
             key={field}
             type="button"
             className={classNames('button is-info', {
               'is-light': sortField !== field,
             })}
-            onClick={() => setsortField(field)}
+            onClick={() => setSortField(field)}
           >
             {field}
           </button>
@@ -73,7 +76,7 @@ export const App: React.FC = () => {
           <button
             type="button"
             className="button is-info is-light"
-            onClick={reset}
+            onClick={handleReset}
           >
             Reset
           </button>
